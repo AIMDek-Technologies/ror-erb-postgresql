@@ -1,0 +1,47 @@
+<div class="row">
+  <div class="col-md-4 col-md-offset-8">
+    <button class="btn btn-default upload" data-target="#bulkUploadModal" data-toggle="modal" upload-type="customers">Upload Customers</button>
+    <button class="btn btn-default upload" data-target="#bulkUploadModal" data-toggle="modal" upload-type="transactions">Upload Transactions</button>
+  </div>
+</div>
+<%= form_tag bulk_uploads_path, :method => :get, :id => 'bulkUploads_search', :class => 'search-form' do %>
+  <%= hidden_field_tag :direction, params[:direction] %>
+  <%= hidden_field_tag :sort, params[:sort] %>
+  <label>Search:</label>
+  <%= text_field_tag :search, params[:search], :class => 'form-control', :placeholder => 'Anything...', :title => "Try using name, amount, balance, description, etc." %>
+<% end %>
+<div id="bulkUploads">
+  <%= render 'bulk_uploads/bulk_uploads' %>
+</div>
+<div class="modal fade" id="bulkUploadModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+          <span aria-hidden="true">
+            &times;
+          </span>
+        </button>
+        <h3 class="modal-title"></h3>
+      </div>
+      <div id="bulk-upload-modal-data"></div>
+    </div>
+  </div>
+</div>
+<script>
+  
+    // get the upload dialog on click of upload customers/transactions button
+    $(".upload").click(function(e){
+       var type = $(this).attr('upload-type');
+       var url = window.location.origin + '/bulk_uploads/new';
+       $.ajax({
+           url: url,
+           type: 'get'
+       }).success(function(response){
+           $('#bulkUploadModal .modal-dialog').attr('upload_type',type);
+           $('#bulkUploadModal .modal-title').html('Upload '+ type);
+           $('#bulk-upload-modal-data').html(response);
+       });
+     });
+
+</script>

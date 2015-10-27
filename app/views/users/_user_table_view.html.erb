@@ -1,0 +1,30 @@
+<table class="table table-responsive table-condensed table-hover table-bordered">
+  <% customers.each do |customer| %>
+    <tr>
+      <td>
+        <%= customer.customer_id %>
+      </td>
+      <td>
+        <%= customer.first_name %>
+      </td>
+      <td>
+        <%= customer.last_name %>
+      </td>
+      <td>
+        <%= customer.email %>
+      </td>
+      <td>
+        <%= customer.phone_number %>
+      </td>
+      <td>
+        <%= render 'shared/credit_card_display', :credit_cards => customer.credit_cards %>
+      </td>
+      <td>
+        <div>
+          <button class="btn btn-default btn-xs btn-edit-customer" customer_id="<%= customer.id %>" data-target="#customerModal" data-toggle="modal" onclick="editCustomer(<%= customer.id %>)">Edit</button>
+          <%= link_to 'Delete',  user_path(customer.id), :method => :delete, :data => { confirm: 'Are you sure you want to delete this customer?' }, class: 'btn btn-danger btn-xs' %>
+        </div>
+      </td>
+    </tr>
+  <% end %>
+</table>

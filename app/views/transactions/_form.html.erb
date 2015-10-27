@@ -1,0 +1,82 @@
+<div class="modal-body">
+  <div class="row">
+    <div class="col-md-3">
+      <span>
+        <%= t('form_labels.select_customer') %>
+      </span>
+    </div>
+    <div class="col-md-9">
+      <%= f.collection_select :user_id, User.customers, :id, :display_name, {prompt: "Select Customer"}, {class: "form-control"} %>
+    </div>
+  </div>
+  <br/>
+  <div class="row">
+    <div class="col-md-3">
+      <span>Select Credit Card</span>
+    </div>
+    <div class="col-md-9">
+      <select class="form-control" id="transaction_credit_cards" name="transaction[credit_card_id]">
+        <option>Select Credit Card</option>
+      </select>
+    </div>
+  </div>
+  <br/>
+  <div class="row">
+    <div class="col-md-3">
+      <span>Amount (₹.)</span>
+    </div>
+    <div class="col-md-9">
+      <%= f.text_field :amount,{:class => 'form-control',:placeholder => 'Amount', :required => true, 'autocomplete' => 'off'} %>
+      <%= f.hidden_field :balance,{:required => true} %>
+      <span id="balance"></span>
+    </div>
+  </div>
+  <br/>
+  <div class="row">
+    <div class="col-md-3">
+      <span>Description</span>
+    </div>
+    <div class="col-md-9">
+      <%= f.text_area :description,{:class => 'form-control', :required => true} %>
+    </div>
+  </div>
+  <br>
+    <div class="row">
+      <div class="col-md-3">
+        <span>Transaction Date</span>
+      </div>
+      <div class="col-md-9">
+        <%= f.text_field :transaction_date,{:class => 'form-control datepicker',:placeholder => t('transaction.transaction_date')} %>
+      </div>
+    </div>
+  </br>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-danger" data-dismiss="modal">Cancel</button>
+  <%= f.submit t('buttons.save_transaction'),{:class => 'btn btn-success'} %>
+</div>
+<script>
+  
+
+    $(function(){
+          $(document).ready(function(){
+              $('.datepicker').datepicker({
+                  format: "dd-mm-yyyy",
+                  autoclose: true
+              });
+          });
+    });
+        $(".transaction-form").submit(function(e){
+         $.post($(".transaction-form").attr("action"), $(".transaction-form").serialize(), function(response){
+           $('#modal-data').html("<img src='/images/loading-icon.gif'>");
+           if(response == 'success'){
+               $.get($("#transactions_search").attr("action"), $("#transactions_search").serialize(), null, "script");
+               $('#transactionModel').modal("hide");
+           }else{
+                 $('#modal-data').html(response);
+           }
+         });
+         e.preventDefault();
+       });
+
+</script>

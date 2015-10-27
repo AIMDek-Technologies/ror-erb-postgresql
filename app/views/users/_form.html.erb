@@ -1,0 +1,187 @@
+<div class="modal-body">
+  <% if @customer.errors.any? %>
+    <div class="panel panel-warning">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          <%= pluralize(@customer.errors.count, "error") + " prohibited this customer from being saved:" %>
+        </h3>
+      </div>
+      <div class="panel-body">
+        <% @customer.errors.full_messages.each do |msg| %>
+          <p class="alert alert-danger">
+            <%= msg %>
+          </p>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+  <div class="row">
+    <div class="col-md-3">
+      <div class="form-group" id="profilePic">
+        <img class="img-thumbnail profilePicture" src="<%= @customer.profile_pic_path.blank? ? t('user.placeholder_pic') : @customer.profile_pic_url %>"/>
+        <input id="userPhoto" style="display:none;" type="file"></input>
+      </div>
+      <br/>
+    </div>
+    <div class="col-md-9">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <%= t('form_labels.basic_details') %>
+        </div>
+        <div class="panel-body">
+          <div class="form-group">
+            <%= f.text_field :first_name,{:class => 'form-control',:placeholder => t('user.first_name'), :required => true} %>
+            <%= f.text_field :last_name,{:class => 'form-control',:placeholder => t('user.last_name'), :required => true} %>
+            <%= f.text_field :date_of_birth,{:class => 'form-control datepicker',:placeholder => t('user.date_of_birth'), :required => true} %>
+            <%= f.hidden_field :password %>
+            <%= f.email_field :email,{:class => 'form-control',:placeholder => t('user.email') , :required => true} %>
+            <%= f.phone_field :phone_number,{:class => 'form-control phone_number',:placeholder => t('user.phone_number'), :required => true} %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br/>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <%= t('form_labels.address_details') %>
+    </div>
+    <div class="panel-body">
+      <%= f.fields_for :address do |address| %>
+        <%= render 'shared/address', :address => address %>
+      <% end %>
+    </div>
+  </div>
+  <br/>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <%= t('form_labels.credit_card_details') %>
+    </div>
+    <div class="panel-body">
+      <%= f.fields_for :credit_cards do |credit_card| %>
+        <%= render 'shared/credit_card', :credit_card => credit_card %>
+      <% end %>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-danger" data-dismiss="modal">Cancel</button>
+  <%= f.submit t('buttons.save_customer'),{:class => 'btn btn-success'} %>
+</div>
+<div id="progress">
+  <div class="bar" style="width:0%"></div>
+</div>
+<script>
+  
+  $(function(){
+
+    $(document).ready(function(){
+        $('.datepicker').datepicker({
+            format: "dd-mm-yyyy",
+            autoclose: true
+        });
+        $('.phone_number').inputmask("(999) 999-9999");
+    });
+
+    $("#profilePic img").click(function(){
+      $("#userPhoto").click();
+    });
+
+    $("#userPhoto").change(function(e){
+        e.preventDefault();
+        var selectedFileContent;
+        var myFormData = new FormData();
+        var file = e.target.files[0];
+        myFormData.append('file',file);
+          var url = window.location.origin + '/upload/file';
+          $.ajax({
+            url: url,
+            data: myFormData,
+            processData: false,
+            contentType: false,
+            type: 'POST'
+          }).success(function(response){
+              //console.log(response);
+          });
+        console.log(myFormData);
+    });
+
+  // submit the add and edit form through ajax
+  $(".user-form").submit(function(e){
+    $.post($(".user-form").attr("action"), $(".user-form").serialize(), function(response){
+      $("#modal-data").html("<img class='loading-icon' src='/images/loading-icon.gif'><h3 class='align-center'>Please wait...</h3>");
+      if(response == 'success'){
+          $.get($("#customers_search").attr("action"), $("#customers_search").serialize(), null, "script");
+          $('#customerModal').modal("hide");
+      }else{
+          $('#modal-data').html(response);
+      }
+    });
+    e.preventDefault();
+  });
+
+  var origin = window.location.origin;
+  // function to auto fill country, state and city based on the zip code
+  $('#geographic_zip_code').blur(function(e){
+          var zipCode = $('#geographic_zip_code').val().trim();
+          var url = origin + '/find_geographic/' + zipCode;
+          if(zipCode){
+              $.ajax({
+                  url: url,
+                  type: 'get'
+              }).success(function(response){
+                  if(response){
+                      $('#user_address_attributes_geographic_id').val(response.id);
+                      $('#geographic_country').val(response.country);
+                      $('#geographic_state').val(response.state);
+                      $('#geographic_city').val(response.city);
+                  }
+              });
+          }else{
+            $('#geographic_country').val("");
+            $('#geographic_state').val("");
+            $('#geographic_city').val("");
+          }
+      });
+
+      // function to populate the states based on the selected country
+      $('#geographic_country').change(function(e){
+          var country =$('#geographic_country').val();
+          if(country){
+            var url = origin + '/find_states/' + country;
+            $.ajax({
+                url: url,
+                type: 'get'
+            }).success(function(response){
+                if(response){
+                    $('#geographic_state option[value!=""]').remove();
+                    $('#geographic_city option[value!=""]').remove();
+                    for(var i=0;i< response.length;i++){
+                        $("#geographic_state").append(new Option(response[i].state, response[i].state));
+                    }
+                }
+            });
+          }
+      });
+
+      // function to populate cities based on the selected state
+      $('#geographic_state').change(function(e){
+          var state =$('#geographic_state').val();
+          if(state){
+            var url = origin + '/find_cities/' + state;
+            $.ajax({
+                url: url,
+                type: 'get'
+            }).success(function(response){
+                if(response){
+                    $('#geographic_city option[value!=""]').remove();
+                    for(var i=0;i< response.length;i++){
+                        $("#geographic_city").append(new Option(response[i].city, response[i].city));
+                    }
+                }
+            });
+         }
+      });
+  });
+
+</script>

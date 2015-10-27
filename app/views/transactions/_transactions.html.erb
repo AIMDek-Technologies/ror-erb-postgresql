@@ -1,0 +1,71 @@
+<% if @transactions.size > 0 %>
+  <table class="table table-hover table-responsive table-condensed pretty" style="background-color:#fff;text-align:center;">
+    <tr>
+      <th>
+        <%= sortable 'id', 'Transaction #' %>
+      </th>
+      <th>
+        <%= sortable 'transaction_date', 'Date' %>
+      </th>
+      <th>Customer Name</th>
+      <th>
+        <%= sortable 'amount', 'Amount' %>
+      </th>
+      <th>
+        <%= sortable 'balance', 'Balance' %>
+      </th>
+      <th>Description</th>
+    </tr>
+    <% @transactions.each do |transaction| %>
+      <tr>
+        <td>
+          <%= transaction.id %>
+        </td>
+        <td>
+          <%= transaction.transaction_date.strftime('%Y-%m-%d') %>
+        </td>
+        <td>
+          <%= transaction.customer_name %>
+        </td>
+        <td>
+          <%= number_to_currency(transaction.amount, :unit => '₹.') %>
+        </td>
+        <td>
+          <%= number_to_currency(transaction.balance, :unit => '₹.') %>
+        </td>
+        <td>
+          <%= transaction.description %>
+        </td>
+      </tr>
+    <% end %>
+    <tr>
+      <th>
+        <%= sortable "transaction_id", "Transaction #" %>
+      </th>
+      <th>
+        <%= sortable "transaction_date", "Date" %>
+      </th>
+      <th>Customer Name</th>
+      <th>
+        <%= sortable "amount", "Amount" %>
+      </th>
+      <th>
+        <%= sortable "balance", "Balance" %>
+      </th>
+      <th>Description</th>
+    </tr>
+  </table>
+  <%= will_paginate @transactions, renderer: BootstrapPagination::Rails %>
+<% else %>
+  <h3>No records found.</h3>
+<% end %>
+<script>
+  
+  $(function(){
+       $("#transactions th a,#transactions .pagination a").on("click",function(e){
+              $.getScript(this.href);
+              e.preventDefault();
+        });
+  });
+
+</script>

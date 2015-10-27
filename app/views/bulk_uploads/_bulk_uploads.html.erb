@@ -1,0 +1,80 @@
+<% if @bulk_uploads.size > 0 %>
+  <table class="table table-hover table-responsive table-condensed pretty" style="background-color:#fff;text-align:center;">
+    <tr>
+      <th>
+        <%= sortable 'id', 'Upload #' %>
+      </th>
+      <th>
+        <%= sortable 'upload_date', 'Upload Date' %>
+      </th>
+      <th>
+        <%= sortable 'total_records', 'Total Records' %>
+      </th>
+      <th>
+        <%= sortable 'success_count', 'Success Records' %>
+      </th>
+      <th>
+        <%= sortable 'failure_count', 'Failed Records' %>
+      </th>
+      <th>Uploaded By</th>
+      <th>Error file</th>
+    </tr>
+    <% @bulk_uploads.each do |bulk_upload| %>
+      <tr>
+        <td>
+          <%= bulk_upload.id %>
+        </td>
+        <td>
+          <%= bulk_upload.upload_date %>
+        </td>
+        <td>
+          <%= bulk_upload.total_records %>
+        </td>
+        <td>
+          <%= bulk_upload.success_count %>
+        </td>
+        <td>
+          <%= bulk_upload.failure_count %>
+        </td>
+        <td>
+          <%= bulk_upload.uploaded_by %>
+        </td>
+        <td>
+          <%= bulk_upload.error_file_path %>
+        </td>
+      </tr>
+    <% end %>
+    <tr>
+      <th>
+        <%= sortable 'id', 'Upload #' %>
+      </th>
+      <th>
+        <%= sortable 'upload_date', 'Upload Date' %>
+      </th>
+      <th>
+        <%= sortable 'total_records', 'Total Records' %>
+      </th>
+      <th>
+        <%= sortable 'success_count', 'Success Records' %>
+      </th>
+      <th>
+        <%= sortable 'failure_count', 'Failed Records' %>
+      </th>
+      <th>Uploaded By</th>
+      <th>Error file</th>
+    </tr>
+  </table>
+  <%= will_paginate @bulk_uploads, renderer: BootstrapPagination::Rails %>
+<% else %>
+  <h3>No records found.</h3>
+<% end %>
+<script>
+  
+  $(function(){
+       $("#bulkUploads th a,#bulkUploads .pagination a").on("click",function(e){
+              $.getScript(this.href);
+              e.preventDefault();
+        });
+  });
+
+</script>

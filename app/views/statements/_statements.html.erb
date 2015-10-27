@@ -1,0 +1,80 @@
+<% if @statements.size > 0 %>
+  <table class="table table-hover table-responsive table-condensed pretty" style="background-color:#fff;text-align:center;">
+    <tr>
+      <th>
+        <%= sortable "id", "Statement #" %>
+      </th>
+      <th>
+        <%= sortable 'statement_date', 'Statement Date' %>
+      </th>
+      <th>Credit Card Number</th>
+      <th>
+        <%= sortable 'from_date', 'From Date' %>
+      </th>
+      <th>
+        <%= sortable 'to_date', 'To Date' %>
+      </th>
+      <th>
+        <%= sortable 'amount_due', 'Amount Due' %>
+      </th>
+      <th>Actions</th>
+    </tr>
+    <% @statements.each do |statement| %>
+      <tr>
+        <td>
+          <%= statement.id %>
+        </td>
+        <td>
+          <%= statement.statement_date.strftime('%d-%m-%Y') %>
+        </td>
+        <td>
+          <%= statement.credit_card_number %>
+        </td>
+        <td>
+          <%= statement.from_date.strftime('%d-%m-%Y') %>
+        </td>
+        <td>
+          <%= statement.to_date.strftime('%d-%m-%Y') %>
+        </td>
+        <td>
+          <%= number_to_currency(statement.amount_due, :unit => '₹.') %>
+        </td>
+        <td>
+          <a class="btn btn-primary btn-sm" href="<%= statement.document_url %>" target="_blank">Download</a>
+        </td>
+      </tr>
+    <% end %>
+    <tr>
+      <th>
+        <%= sortable "id", "Statement #" %>
+      </th>
+      <th>
+        <%= sortable 'statement_date', 'Statement Date' %>
+      </th>
+      <th>Credit Card Number</th>
+      <th>
+        <%= sortable 'from_date', 'From Date' %>
+      </th>
+      <th>
+        <%= sortable 'to_date', 'To Date' %>
+      </th>
+      <th>
+        <%= sortable 'amount_due', 'Amount Due' %>
+      </th>
+      <th>Actions</th>
+    </tr>
+  </table>
+  <%= will_paginate @statements, renderer: BootstrapPagination::Rails %>
+<% else %>
+  <h3>No records found.</h3>
+<% end %>
+<script>
+  
+  $(function(){
+       $("#statements th a,#statements .pagination a").on("click",function(e){
+              $.getScript(this.href);
+              e.preventDefault();
+        });
+  });
+
+</script>

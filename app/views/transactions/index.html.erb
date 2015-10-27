@@ -1,0 +1,29 @@
+<div class="row">
+  <div class="col-md-2 col-md-offset-10">
+    <button class="btn btn-default" data-target="#transactionModel" data-toggle="modal" id="add_transaction">+ Add Transaction</button>
+  </div>
+</div>
+<%= form_tag transactions_path, :method => :get, :id => 'transactions_search', :class => 'search-form' do %>
+  <%= hidden_field_tag :direction, params[:direction] %>
+  <%= hidden_field_tag :sort, params[:sort] %>
+  <label>Search:</label>
+  <%= text_field_tag :search, params[:search], :class => 'form-control', :placeholder => 'Anything...', :title => "Try using name, amount, balance, description, etc." %>
+<% end %>
+<div id="transactions">
+  <%= render 'transactions/transactions' %>
+</div>
+<div class="modal fade" id="transactionModel">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+          <span aria-hidden="true">
+            &times;
+          </span>
+        </button>
+        <h3 class="modal-title"></h3>
+      </div>
+      <div id="modal-data"></div>
+    </div>
+  </div>
+</div>

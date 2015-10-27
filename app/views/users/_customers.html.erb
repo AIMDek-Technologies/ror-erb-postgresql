@@ -1,0 +1,111 @@
+<% if @customers.present? %>
+  <table class="table table-hover table-responsive table-condensed pretty" style="background-color:#fff;text-align:center;">
+    <tr>
+      <th>
+        <%= sortable "id",t('user.id') %>
+      </th>
+      <th>
+        <%= sortable "first_name",t('user.first_name') %>
+      </th>
+      <th>
+        <%= sortable "last_name",t('user.last_name') %>
+      </th>
+      <th>
+        <%= sortable "email",t('user.email') %>
+      </th>
+      <th>
+        <%= sortable "phone_number",t('user.phone_number') %>
+      </th>
+      <th>
+        <%= t('credit_card.ccn') %>
+      </th>
+      <th>
+        <%= t('credit_card.cl') %>
+      </th>
+      <th>
+        <%= t('credit_card.acl') %>
+      </th>
+      <th colspan="2">
+        <%= t('views.actions') %>
+      </th>
+    </tr>
+    <% @customers.each do |customer| %>
+      <tr>
+        <td>
+          <%= customer.id %>
+        </td>
+        <td>
+          <%= customer.first_name %>
+        </td>
+        <td>
+          <%= customer.last_name %>
+        </td>
+        <td>
+          <%= customer.email %>
+        </td>
+        <td>
+          <%= customer.phone_number %>
+        </td>
+        <td colspan="3">
+          <%= render 'shared/credit_card_display', :credit_cards => customer.credit_cards %>
+        </td>
+        <td>
+          <div>
+            <button class="btn btn-primary btn-sm btn-edit-customer" customer_id="<%= customer.id %>" data-target="#customerModal" data-toggle="modal" onclick="editCustomer(<%= customer.id %>)">Edit</button>
+            <button class="btn btn-danger btn-sm btn-delete-customer" onclick="deleteCustomer(<%= customer.id %>,event)">Delete</button>
+          </div>
+        </td>
+      </tr>
+    <% end %>
+    <tr>
+      <th>
+        <%= sortable "id",t('user.customer_id') %>
+      </th>
+      <th>
+        <%= sortable "first_name",t('user.first_name') %>
+      </th>
+      <th>
+        <%= sortable "last_name",t('user.last_name') %>
+      </th>
+      <th>
+        <%= sortable "email",t('user.email') %>
+      </th>
+      <th>
+        <%= sortable "phone_number",t('user.phone_number') %>
+      </th>
+      <th>
+        <%= t('credit_card.ccn') %>
+      </th>
+      <th>
+        <%= t('credit_card.cl') %>
+      </th>
+      <th>
+        <%= t('credit_card.acl') %>
+      </th>
+      <th colspan="2">
+        <%= t('views.actions') %>
+      </th>
+    </tr>
+  </table>
+  <%= will_paginate @customers, renderer: BootstrapPagination::Rails %>
+<% else %>
+  <h3>
+    <%= t('messages.no_records') %>
+  </h3>
+<% end %>
+<script>
+  
+  $(function(){
+       // to handle pagination and sorting
+       $("#customers th a,#customers .pagination a").on("click",function(e){
+              $.getScript(this.href);
+              e.preventDefault();
+        });
+       $(document).ready(function (argument) {
+          $('.credit_card_number').inputmask("9999-9999-9999-9999");
+          $('.cvv').inputmask("999");
+       });
+  });
+
+
+</script>
