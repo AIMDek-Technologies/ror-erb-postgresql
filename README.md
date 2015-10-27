@@ -1,4 +1,4 @@
-# Ruby on Rails with HAML Prototype
+# Ruby on Rails with ERB Prototype
 
 This prototype will work with following technical specifications:
 1. Ruby 2.0.0 or above
